@@ -103,7 +103,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { query, suggestions } = this.props;
+		const { query, suggestions, store } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -120,6 +120,7 @@ class SearchStream extends Component {
 		return (
 			<Stream
 				{ ...this.props }
+				store={ store }
 				followSource={ SEARCH_RESULTS }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
