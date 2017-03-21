@@ -24,7 +24,7 @@ import {
 	getSitePlanSlug,
 } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections, hasFetchedConnections, getSiteUserActiveConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
@@ -66,7 +66,8 @@ class PostShare extends Component {
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
 		hasFetchedConnections: PropTypes.bool,
-		requestConnections: PropTypes.func
+		requestConnections: PropTypes.func,
+		enabledConnectionIds: PropTypes.array,
 	};
 
 	static FOOTER_SECTION_SCHEDULED = 'footer-section-scheduled';
@@ -74,9 +75,8 @@ class PostShare extends Component {
 
 	state = {
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
-		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		footerSection: PostShare.FOOTER_SECTION_SCHEDULED
-
+		footerSection: PostShare.FOOTER_SECTION_SCHEDULED,
+		enabledConnectionIds: map( this.props.activeConnections, 'keyring_connection_ID' ),
 	};
 
 	setFooterSection = footerSection => () => this.setState( { footerSection } );
@@ -94,22 +94,12 @@ class PostShare extends Component {
 	}
 
 	toggleConnection = id => {
-		const skipped = this.state.skipped.slice();
-		const index = skipped.indexOf( id );
-		if ( index !== -1 ) {
-			skipped.splice( index, 1 );
-		} else {
-			skipped.push( id );
-		}
-
-		this.setState( { skipped } );
+		const enabledConnectionIds = new Set( this.state.enabledConnectionIds );
+		enabledConnectionIds.delete( id ) || enabledConnectionIds.add( id );
+		this.setState( { enabledConnectionIds: Array.from( enabledConnectionIds ) } );
 	};
 
-	skipConnection( { keyring_connection_ID } ) {
-		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
-	}
-
-	isConnectionActive = connection => connection.status !== 'broken' && this.skipConnection( connection );
+	isConnectionActive = connection => includes( this.state.enabledConnectionIds, connection.keyring_connection_ID );
 
 	renderServices() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
@@ -133,7 +123,7 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.message, this.state.enabledConnectionIds );
 	};
 
 	isButtonDisabled() {
@@ -488,6 +478,7 @@ export default connect(
 			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
 			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
 			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
+			activeConnections: getSiteUserActiveConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
