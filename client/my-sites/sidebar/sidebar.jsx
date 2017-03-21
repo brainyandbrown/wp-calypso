@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import Gridicon from 'gridicons';
@@ -42,7 +42,7 @@ import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
  */
 const debug = debugFactory( 'calypso:my-sites:sidebar' );
 
-export class MySitesSidebar extends Component {
+export class MySitesSidebar extends PureComponent {
 
 	static propTypes = {
 		setNextLayoutFocus: PropTypes.func.isRequired,
