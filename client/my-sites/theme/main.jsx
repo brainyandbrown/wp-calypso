@@ -613,7 +613,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet { ...props }
 			siteId={ siteId }
-			theme={ props /* TODO: Have connectOptions() only use theme ID */ }
 			options={ [
 				'signup',
 				'customize',
