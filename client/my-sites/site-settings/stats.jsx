@@ -125,10 +125,14 @@ class SiteStats extends Component {
 						</div>
 
 						{ this.renderToggle( 'admin_bar', translate( 'Put a chart showing 48 hours of views in the admin bar' ) ) }
-						{ this.renderToggle( 'hide_smile', translate( 'Hide the stats smiley face image' ) ) }
-						<FormSettingExplanation>
-							{ translate( 'The image helps collect stats, but should work when hidden.' ) }
-						</FormSettingExplanation>
+						{ this.renderToggle( 'hide_smile', (
+							<div>
+								{ translate( 'Hide the stats smiley face image' ) }
+								<FormSettingExplanation>
+									{ translate( 'The image helps collect stats, but should work when hidden.' ) }
+								</FormSettingExplanation>
+							</div>
+						) ) }
 					</FormFieldset>
 
 					<FormFieldset>
