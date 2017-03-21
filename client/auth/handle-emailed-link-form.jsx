@@ -23,6 +23,9 @@ const debug = debugFactory( 'calypso:magic-login' );
 class HandleEmailedLinkForm extends React.Component {
 	constructor( props ) {
 		super( props );
+
+		this.handleSubmit = this.handleSubmit.bind( this );
+
 		this.state = {
 			hasSubmitted: false,
 		};
@@ -74,7 +77,7 @@ class HandleEmailedLinkForm extends React.Component {
 	render() {
 		const { currentUser, emailAddress, translate } = this.props;
 		const action = (
-			<Button primary disabled={ !! this.state.hasSubmitted } onClick={ e => this.handleSubmit( e ) }>
+			<Button primary disabled={ !! this.state.hasSubmitted } onClick={ this.handleSubmit }>
 				{ translate( 'Finish Login' ) }
 			</Button>
 		);

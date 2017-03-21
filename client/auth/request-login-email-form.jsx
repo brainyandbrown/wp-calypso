@@ -29,6 +29,12 @@ const debug = debugFactory( 'calypso:magic-login' );
 class RequestLoginEmailForm extends React.Component {
 	constructor( props ) {
 		super( props );
+
+		this.handleChangeEvent = this.handleChangeEvent.bind( this );
+		this.handleError = this.handleError.bind( this );
+		this.handleNoticeDismiss = this.handleNoticeDismiss.bind( this );
+		this.handleSubmit = this.handleSubmit.bind( this );
+
 		this.state = {
 			hasSubmitted: false,
 			isEmailValid: false,
@@ -66,10 +72,25 @@ class RequestLoginEmailForm extends React.Component {
 		} );
 	}
 
+	handleNoticeDismiss() {
+		this.setState( {
+			errorMessage: null,
+			hasSubmitted: false,
+		} );
+	}
+
+	handleError( error ) {
+		const { translate } = this.props;
+		this.setState( {
+			errorMessage: error.message
+				? error.message
+				: translate( 'Could not request a login email. Please try again later.' ),
+		} );
+	}
+
 	handleSubmit( event ) {
 		event.preventDefault();
 
-		const { translate } = this.props;
 		const emailAddress = formState.getFieldValue( this.state.form, 'emailAddress' );
 		debug( 'form submitted!', emailAddress );
 
@@ -83,13 +104,9 @@ class RequestLoginEmailForm extends React.Component {
 
 		wpcom.undocumented().requestMagicLoginEmail( {
 			email: emailAddress
-		}, ( err, data ) => {
-			if ( err ) {
-				this.setState( {
-					errorMessage: err.message
-						? err.message
-						: translate( 'Could not request a login email. Please try again later.' ),
-				} );
+		}, ( error, data ) => {
+			if ( error ) {
+				this.handleError( error );
 				return;
 			}
 			debug( 'Requeset successful', data );
@@ -116,16 +133,11 @@ class RequestLoginEmailForm extends React.Component {
 						text={ this.state.errorMessage }
 						className="auth__request-login-email-form-notice"
 						showDismiss={ true }
-						onDismissClick={ () => {
-							this.setState( {
-								errorMessage: null,
-								hasSubmitted: false,
-							} );
-						} }
+						onDismissClick={ this.handleNoticeDismiss }
 						status="is-error" />
 					: null
 				}
-				<LoggedOutForm onSubmit={ e => this.handleSubmit( e ) }>
+				<LoggedOutForm onSubmit={ this.handleSubmit }>
 					<p>{
 						translate( 'Get a link sent to the email address associated ' +
 							'with your account to log in instantly without your password.' )
@@ -145,7 +157,7 @@ class RequestLoginEmailForm extends React.Component {
 							name="emailAddress"
 							placeholder="Email address"
 							value={ this.state.form.emailAddress.value }
-							onChange={ e => this.handleChangeEvent( e ) }
+							onChange={ this.handleChangeEvent }
 						/>
 
 						<LoggedOutFormFooter>
