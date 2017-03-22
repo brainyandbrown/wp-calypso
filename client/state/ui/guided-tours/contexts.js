@@ -85,16 +85,15 @@ export const hasUserRegisteredBefore = date => state => {
 	return ( registrationDate < compareDate );
 };
 
+/*
+ * Deprecated.
+ */
+export const hasUserInteractedWithComponent = () => () => false;
+
 /**
- * Returns a selector that tests whether the user has interacted with a given component.
  *
- * @see client/components/track-interactions
- *
- * @param {String} componentName Name of component to test
  * @return {Function} Selector function
  */
-export const hasUserInteractedWithComponent = componentName => state =>
-	getLastAction( state ).component === componentName;
 
 /**
  * Returns true if the selected site can be previewed
