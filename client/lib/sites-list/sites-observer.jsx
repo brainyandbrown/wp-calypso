@@ -16,6 +16,8 @@ export const sitesObserver = ( WrappedComponent ) => {
 		constructor( props, context ) {
 			super( props, context );
 
+			this.update = this.update.bind( this );
+
 			this.state = {};
 		}
 
@@ -34,25 +36,24 @@ export const sitesObserver = ( WrappedComponent ) => {
 		}
 
 		cacheSites() {
-			// Copy the array of sites list so we can pass the exact
-			// same array to the wrapped component unless sites change.
 			if ( this.props.sites ) {
-				this.setState( { sites: this.props.sites.get().slice() } );
+				this.setState( { sites: Object.create( this.props.sites ) } );
 			}
 		}
 
 		render() {
 			return (
 				<WrappedComponent
-					sites={ this.state.sites }
+					sites={ this.state.sites || this.props.sites }
 					{ ...omit( this.props, 'sites' ) }
 				/>
 			);
 		}
 	}
 
-	SitesObserverComponent.displayName =
-		WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	SitesObserverComponent.displayName = `SitesObserver(${ wrappedComponentName })`;
+
 
 	return SitesObserverComponent;
 };
