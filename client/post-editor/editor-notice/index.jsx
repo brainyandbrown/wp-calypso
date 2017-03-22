@@ -17,6 +17,7 @@ import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
+import { isSitePreviewable } from 'state/sites/selectors';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -194,8 +195,8 @@ export class EditorNotice extends Component {
 	}
 
 	renderNoticeAction() {
-		const { onViewClick, action, link } = this.props;
-		if ( onViewClick && ! this.props.site.jetpack ) {
+		const { onViewClick, action, link, isSitePreviewable } = this.props;
+		if ( onViewClick && isSitePreviewable ) {
 			return (
 				<NoticeAction onClick={ onViewClick } icon={ 'visible' }>
 					{ this.getText( action ) }
@@ -243,5 +244,6 @@ export default connect( ( state ) => {
 		site: getSelectedSite( state ),
 		type: post.type,
 		typeObject: getPostType( state, siteId, post.type ),
+		isSitePreviewable: isSitePreviewable( state, siteId ),
 	};
 }, { setLayoutFocus } )( localize( EditorNotice ) );
