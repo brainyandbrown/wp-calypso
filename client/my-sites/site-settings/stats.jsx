@@ -26,7 +26,7 @@ import {
 	isJetpackSiteInDevelopmentMode
 } from 'state/selectors';
 
-class SiteStats extends Component {
+class JetpackSiteStats extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
@@ -187,4 +187,4 @@ export default connect(
 			siteRoles: getSiteRoles( state, siteId ),
 		};
 	}
-)( localize( SiteStats ) );
+)( localize( JetpackSiteStats ) );
