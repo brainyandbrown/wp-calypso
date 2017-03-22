@@ -14,7 +14,7 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
-import JetpackSiteStats from 'my-sites/site-settings/stats';
+import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
