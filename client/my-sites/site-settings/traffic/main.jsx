@@ -15,17 +15,23 @@ import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
+import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const SiteSettingsTraffic = ( {
 	fields,
 	handleAutosavingToggle,
 	handleSubmitForm,
+	isJetpack,
 	isRequestingSettings,
 	isSavingSettings,
 	site,
 	sites,
+	submitForm,
+	trackEvent,
+	updateFields,
 	upgradeToBusiness
 } ) => (
 	<Main className="traffic__main site-settings">
@@ -39,6 +45,17 @@ const SiteSettingsTraffic = ( {
 			isRequestingSettings={ isRequestingSettings }
 			fields={ fields }
 		/>
+		{
+			! isJetpack &&
+			<AmpWpcom
+				submitForm={ submitForm }
+				trackEvent={ trackEvent }
+				updateFields={ updateFields }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+		}
 		<AnalyticsSettings />
 		<SeoSettingsHelpCard />
 		<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
@@ -51,9 +68,14 @@ SiteSettingsTraffic.propTypes = {
 };
 
 const connectComponent = connect(
-	( state ) => ( {
-		site: getSelectedSite( state ),
-	} )
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			site: getSelectedSite( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+		};
+	}
 );
 
 const getFormSettings = partialRight( pick, [
@@ -61,6 +83,8 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
 	'jetpack_relatedposts_show_thumbnails',
+	'amp_is_supported',
+	'amp_is_enabled',
 ] );
 
 export default flowRight(
