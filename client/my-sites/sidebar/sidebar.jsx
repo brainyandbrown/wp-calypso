@@ -36,6 +36,7 @@ import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import sitesObserver from 'lib/sites-list/sites-observer';
 
 /**
  * Module variables
@@ -680,4 +681,6 @@ function mapStateToProps( state ) {
 }
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( localize( MySitesSidebar ) );
+export default sitesObserver(
+	connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( localize( MySitesSidebar ) )
+);
