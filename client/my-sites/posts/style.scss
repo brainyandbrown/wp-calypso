@@ -12,6 +12,10 @@
 .posts__primary {
 	flex-grow: 1;
 	max-width: 720px;
+
+	@include breakpoint( ">1280px" ) {
+		min-width: 520px;
+	}
 }
 
 .posts__list {
@@ -619,6 +623,7 @@
 	flex-grow: 1;
 	margin: 0 0 24px 24px;
 	display: none;
+	max-width: 400px;
 
 	@include breakpoint( ">1280px" ) {
 		display: block;
